@@ -1,0 +1,147 @@
+=====================================================
+ÁLGEBRA RELACIONAL - SISTEMA DE GESTÃO DE ESTOQUE
+Supermercado - 5 Consultas Obrigatórias
+=====================================================
+
+LEGENDA DOS OPERADORES:
+σ (sigma)     = Seleção (WHERE)
+π (pi)        = Projeção (SELECT colunas)
+⨝ (bowtie)    = Junção Natural (JOIN)
+⋈ (join)      = Junção (JOIN com condição)
+∪ (união)     = União (UNION)
+∩ (interseção)= Interseção
+− (diferença) = Diferença
+× (produto)   = Produto Cartesiano
+ρ (rho)       = Renomeação
+
+=====================================================
+CONSULTA 1: SELEÇÃO (σ)
+Descrição: Listar todos os produtos com quantidade em estoque abaixo do estoque mínimo
+=====================================================
+
+Notação:
+σ(quantidade_estoque < estoque_minimo)(PRODUTO)
+
+Leitura:
+"Selecione da relação PRODUTO todos os registros onde 
+quantidade_estoque é menor que estoque_minimo"
+
+Equivalente SQL:
+SELECT * FROM PRODUTO WHERE quantidade_estoque < estoque_minimo;
+
+=====================================================
+CONSULTA 2: PROJEÇÃO (π) + SELEÇÃO (σ)
+Descrição: Listar nome e salário dos funcionários do setor de Caixa
+=====================================================
+
+Notação:
+π(nome, salario)(σ(id_setor = 1)(FUNCIONARIO))
+
+Leitura:
+"Projete (mostre) apenas nome e salario dos registros da relação 
+FUNCIONARIO onde id_setor é igual a 1"
+
+Equivalente SQL:
+SELECT nome, salario FROM FUNCIONARIO WHERE id_setor = 1;
+
+=====================================================
+CONSULTA 3: JUNÇÃO (⋈) + PROJEÇÃO (π)
+Descrição: Listar produtos com nome da categoria
+=====================================================
+
+Notação:
+π(nome_produto, preco_venda, nome_categoria)(PRODUTO ⋈(PRODUTO.id_categoria = CATEGORIA.id_categoria) CATEGORIA)
+
+Leitura:
+"Projete nome_produto, preco_venda e nome_categoria da junção entre 
+PRODUTO e CATEGORIA usando a condição id_categoria"
+
+Equivalente SQL:
+SELECT p.nome_produto, p.preco_venda, c.nome_categoria 
+FROM PRODUTO p 
+INNER JOIN CATEGORIA c ON p.id_categoria = c.id_categoria;
+
+=====================================================
+CONSULTA 4: JUNÇÃO MÚLTIPLA (⋈) + SELEÇÃO (σ) + PROJEÇÃO (π)
+Descrição: Listar vendas realizadas por funcionários do setor Caixa com nome do funcionário
+=====================================================
+
+Notação:
+π(id_venda, data_hora, valor_total, nome)(
+    σ(id_setor = 1)(
+        VENDA ⋈(VENDA.id_funcionario = FUNCIONARIO.id_funcionario) FUNCIONARIO
+    )
+)
+
+Leitura:
+"Projete id_venda, data_hora, valor_total e nome da seleção onde 
+id_setor = 1 da junção entre VENDA e FUNCIONARIO"
+
+Equivalente SQL:
+SELECT v.id_venda, v.data_hora, v.valor_total, f.nome
+FROM VENDA v
+INNER JOIN FUNCIONARIO f ON v.id_funcionario = f.id_funcionario
+WHERE f.id_setor = 1;
+
+=====================================================
+CONSULTA 5: JUNÇÃO TRIPLA (⋈) + PROJEÇÃO (π)
+Descrição: Listar itens vendidos com nome do produto e nome da categoria
+=====================================================
+
+Notação:
+π(id_venda, nome_produto, nome_categoria, quantidade, subtotal)(
+    (ITEM_VENDA ⋈(ITEM_VENDA.id_produto = PRODUTO.id_produto) PRODUTO) 
+    ⋈(PRODUTO.id_categoria = CATEGORIA.id_categoria) CATEGORIA
+)
+
+Leitura:
+"Projete id_venda, nome_produto, nome_categoria, quantidade e subtotal 
+da junção entre ITEM_VENDA, PRODUTO e CATEGORIA"
+
+Equivalente SQL:
+SELECT iv.id_venda, p.nome_produto, c.nome_categoria, iv.quantidade, iv.subtotal
+FROM ITEM_VENDA iv
+INNER JOIN PRODUTO p ON iv.id_produto = p.id_produto
+INNER JOIN CATEGORIA c ON p.id_categoria = c.id_categoria;
+
+=====================================================
+CONSULTA EXTRA (BÔNUS): UNIÃO (∪)
+Descrição: Listar todos os nomes de funcionários e fornecedores
+=====================================================
+
+Notação:
+π(nome)(FUNCIONARIO) ∪ π(razao_social)(FORNECEDOR)
+
+Leitura:
+"União da projeção de nome de FUNCIONARIO com a projeção de 
+razao_social de FORNECEDOR"
+
+Equivalente SQL:
+SELECT nome AS nome_completo FROM FUNCIONARIO
+UNION
+SELECT razao_social FROM FORNECEDOR;
+
+=====================================================
+OBSERVAÇÕES IMPORTANTES:
+=====================================================
+
+1. A Álgebra Relacional é a base matemática para linguagens de consulta SQL
+
+2. Operadores principais usados:
+   - σ (Seleção): Filtra linhas baseado em condições
+   - π (Projeção): Seleciona colunas específicas
+   - ⋈ (Junção): Combina tabelas relacionadas
+   - ∪ (União): Combina resultados de duas consultas
+
+3. As consultas acima demonstram:
+   ✓ Seleção simples
+   ✓ Projeção com seleção
+   ✓ Junções entre tabelas
+   ✓ Junções múltiplas
+   ✓ União de resultados
+
+4. Cada consulta SQL pode ser representada em Álgebra Relacional e vice-versa
+
+=====================================================
+FIM DA ÁLGEBRA RELACIONAL
+=====================================================

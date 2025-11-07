@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vendas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        .navbar { background: #667eea; color: white; padding: 20px; }
+        .container { max-width: 1400px; margin: 40px auto; padding: 20px; }
+        table { width: 100%; background: white; border-radius: 10px; overflow: hidden; }
+        th { background: #667eea; color: white; padding: 15px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+        .btn-back { background: white; color: #667eea; padding: 10px 20px; border-radius: 20px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>💰 Histórico de Vendas</h1>
+        <a href="/gerente" class="btn-back">← Voltar</a>
+    </div>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data/Hora</th>
+                    <th>Funcionário</th>
+                    <th>Valor Total</th>
+                    <th>Forma de Pagamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venda in vendas %}
+                <tr>
+                    <td>#{{ venda.id_venda }}</td>
+                    <td>{{ venda.data_hora }}</td>
+                    <td>{{ venda.nome }}</td>
+                    <td>R$ {{ "%.2f"|format(venda.valor_total) }}</td>
+                    <td>{{ venda.forma_pagamento }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

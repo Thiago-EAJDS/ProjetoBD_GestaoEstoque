@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ categoria.nome_categoria }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        .navbar { background: #48bb78; color: white; padding: 20px; display: flex; justify-content: space-between; }
+        .container { max-width: 1400px; margin: 40px auto; padding: 20px; }
+        .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+        .produto-card { background: white; padding: 20px; border-radius: 15px; }
+        .produto-nome { font-weight: 600; margin-bottom: 10px; }
+        .produto-preco { font-size: 24px; color: #48bb78; margin: 15px 0; }
+        .btn-add { width: 100%; background: #48bb78; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; }
+        .btn-back { background: white; color: #48bb78; padding: 10px 20px; border-radius: 20px; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🗂️ {{ categoria.nome_categoria }}</h1>
+        <a href="/cliente/carrinho" style="color: white; margin-right: 20px; text-decoration: none;">
+    🛒 Carrinho ({{ total_itens }})
+</a>
+    </div>
+    <div class="container">
+        <div class="produtos-grid">
+            {% for produto in produtos %}
+            <div class="produto-card">
+                <div class="produto-nome">{{ produto.nome_produto }}</div>
+                <div class="produto-preco">R$ {{ "%.2f"|format(produto.preco_venda) }}</div>
+                <p>Estoque: {{ produto.quantidade_estoque }}</p>
+                <input type="number" id="qty-{{ produto.id_produto }}" value="1" min="1" max="{{ produto.quantidade_estoque }}" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                <button class="btn-add" onclick="adicionar({{ produto.id_produto }}, '{{ produto.nome_produto }}', {{ produto.preco_venda }})">Adicionar ao Carrinho</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        async function adicionar(id, nome, preco) {
+    const qtd = parseInt(document.getElementById(`qty-${id}`).value);
+    try {
+        const res = await fetch('/api/carrinho/adicionar', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id, nome, preco, quantidade: qtd})
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('✅ Produto adicionado! Total de itens: ' + result.total_itens);
+            // Recarregar página para atualizar contador
+            location.reload();
+        }
+    } catch (error) {
+        alert('Erro: ' + error);
+    }
+}
+    </script>
+</body>
+</html>

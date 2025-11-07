@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Carrinho de Compras</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f7fa; }
+        .navbar { background: #48bb78; color: white; padding: 20px; }
+        .container { max-width: 900px; margin: 40px auto; padding: 20px; background: white; border-radius: 15px; }
+        table { width: 100%; margin: 20px 0; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .total { font-size: 24px; font-weight: bold; text-align: right; margin: 20px 0; }
+        .btn { padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 5px; }
+        .btn-finalizar { background: #48bb78; color: white; }
+        .btn-limpar { background: #e53e3e; color: white; }
+        .btn-continuar { background: #4299e1; color: white; }
+        .btn-remover { background: #e53e3e; color: white; padding: 5px 10px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🛒 Meu Carrinho</h1>
+    </div>
+    <div class="container">
+        {% if carrinho %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in carrinho %}
+<tr id="item-{{ item.id }}">
+    <td>{{ item.nome }}</td>
+    <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+    <td>{{ item.quantidade }}</td>
+    <td>R$ {{ "%.2f"|format(item.preco * item.quantidade) }}</td>
+    <td><button class="btn-remover" onclick="remover('{{ item.id }}', '{{ item.nome }}')">Remover</button></td>
+</tr>
+{% endfor %}
+            </tbody>
+        </table>
+        <div class="total">Total: R$ {{ "%.2f"|format(total) }}</div>
+        <div style="text-align: center;">
+            <button class="btn btn-finalizar" onclick="finalizar()">✅ Finalizar Compra</button>
+            <button class="btn btn-limpar" onclick="limpar()">🗑️ Limpar Carrinho</button>
+            <a href="/cliente"><button class="btn btn-continuar">🛍️ Continuar Comprando</button></a>
+        </div>
+        {% else %}
+        <p style="text-align: center; padding: 40px; color: #666;">Seu carrinho está vazio</p>
+        <div style="text-align: center;">
+            <a href="/cliente"><button class="btn btn-continuar">🛍️ Ir às Compras</button></a>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+    async function remover(id, nome) {
+    console.log('Removendo produto ID:', id);
+    
+    if (!confirm(`Remover "${nome}" do carrinho?`)) return;
+    
+    try {
+        console.log('Fazendo requisição para:', `/api/carrinho/remover/${id}`);
+        
+        const res = await fetch(`/api/carrinho/remover/${id}`, {
+            method: 'POST'
+        });
+        
+        console.log('Status da resposta:', res.status);
+        
+        const result = await res.json();
+        console.log('Resultado:', result);
+        
+        if (result.success) {
+            alert('✅ Produto removido!');
+            location.reload();
+        } else {
+            alert('❌ Erro: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Erro completo:', error);
+        alert('❌ Erro ao remover: ' + error);
+    }
+}
+
+    async function limpar() {
+        if (!confirm('Limpar todo o carrinho?')) return;
+        
+        try {
+            const res = await fetch('/api/carrinho/limpar', {
+                method: 'POST'
+            });
+            
+            const result = await res.json();
+            
+            if (result.success) {
+                alert('✅ Carrinho limpo!');
+                location.reload();
+            } else {
+                alert('❌ Erro: ' + result.message);
+            }
+        } catch (error) {
+            alert('❌ Erro ao limpar: ' + error);
+            console.error('Erro:', error);
+        }
+    }
+
+    async function finalizar() {
+        if (!confirm('Confirmar a compra de R$ {{ "%.2f"|format(total) }}?')) return;
+        
+        try {
+            const res = await fetch('/api/carrinho/finalizar', {
+                method: 'POST'
+            });
+            
+            const result = await res.json();
+            
+            if (result.success) {
+                alert('✅ ' + result.message);
+                window.location.href = result.redirect;
+            } else {
+                alert('❌ Erro: ' + result.message);
+            }
+        } catch (error) {
+            alert('❌ Erro ao finalizar: ' + error);
+            console.error('Erro:', error);
+        }
+    }
+</script>
+</body>
+</html>
