@@ -1,21 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Carrinho de Compras</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f7fa; }
-        .navbar { background: #48bb78; color: white; padding: 20px; }
-        .container { max-width: 900px; margin: 40px auto; padding: 20px; background: white; border-radius: 15px; }
-        table { width: 100%; margin: 20px 0; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        .total { font-size: 24px; font-weight: bold; text-align: right; margin: 20px 0; }
-        .btn { padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 5px; }
-        .btn-finalizar { background: #48bb78; color: white; }
-        .btn-limpar { background: #e53e3e; color: white; }
-        .btn-continuar { background: #4299e1; color: white; }
-        .btn-remover { background: #e53e3e; color: white; padding: 5px 10px; font-size: 12px; }
-    </style>
+    <title>Carrinho de Compras</title>  
+    <link rel="stylesheet" href="carrinho.css"> 
 </head>
 <body>
     <div class="navbar">
@@ -58,79 +45,6 @@
         </div>
         {% endif %}
     </div>
-    <script>
-    async function remover(id, nome) {
-    console.log('Removendo produto ID:', id);
-    
-    if (!confirm(`Remover "${nome}" do carrinho?`)) return;
-    
-    try {
-        console.log('Fazendo requisição para:', `/api/carrinho/remover/${id}`);
-        
-        const res = await fetch(`/api/carrinho/remover/${id}`, {
-            method: 'POST'
-        });
-        
-        console.log('Status da resposta:', res.status);
-        
-        const result = await res.json();
-        console.log('Resultado:', result);
-        
-        if (result.success) {
-            alert('✅ Produto removido!');
-            location.reload();
-        } else {
-            alert('❌ Erro: ' + result.message);
-        }
-    } catch (error) {
-        console.error('Erro completo:', error);
-        alert('❌ Erro ao remover: ' + error);
-    }
-}
-
-    async function limpar() {
-        if (!confirm('Limpar todo o carrinho?')) return;
-        
-        try {
-            const res = await fetch('/api/carrinho/limpar', {
-                method: 'POST'
-            });
-            
-            const result = await res.json();
-            
-            if (result.success) {
-                alert('✅ Carrinho limpo!');
-                location.reload();
-            } else {
-                alert('❌ Erro: ' + result.message);
-            }
-        } catch (error) {
-            alert('❌ Erro ao limpar: ' + error);
-            console.error('Erro:', error);
-        }
-    }
-
-    async function finalizar() {
-        if (!confirm('Confirmar a compra de R$ {{ "%.2f"|format(total) }}?')) return;
-        
-        try {
-            const res = await fetch('/api/carrinho/finalizar', {
-                method: 'POST'
-            });
-            
-            const result = await res.json();
-            
-            if (result.success) {
-                alert('✅ ' + result.message);
-                window.location.href = result.redirect;
-            } else {
-                alert('❌ Erro: ' + result.message);
-            }
-        } catch (error) {
-            alert('❌ Erro ao finalizar: ' + error);
-            console.error('Erro:', error);
-        }
-    }
-</script>
+    <script src="carrinho.js"></script>
 </body>
 </html>
