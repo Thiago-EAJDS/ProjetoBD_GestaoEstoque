@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Produtos</title>
+    <link rel="stylesheet" href="../css/produtos.css">
+</head>
+<body>
+    <h1>Lista de Produtos</h1>
+    <a href="/gerente">Voltar</a>
+    
+    <table border="1">
+        <tr>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+        </tr>
+        {% for produto in produtos %}
+        <tr>
+            <td>{{ produto.nome_produto }}</td>
+            <td>{{ produto.nome_categoria }}</td>
+            <td>R$ {{ "%.2f"|format(produto.preco_venda) }}</td>
+            <td>{{ produto.quantidade_estoque }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <script src="produtos.js"></script>
+</body>
+</html>

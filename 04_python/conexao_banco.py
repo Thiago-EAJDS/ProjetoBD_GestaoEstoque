@@ -5,7 +5,6 @@
 =====================================================
 EXTENSÃO TECNOLÓGICA - PYTHON + SQLITE
 Sistema de Gestão de Estoque - Supermercado
-Autor: Equipe BD 2025.2
 Data: Novembro 2024
 =====================================================
 Objetivo: Demonstrar conexão ao banco de dados SQLite
