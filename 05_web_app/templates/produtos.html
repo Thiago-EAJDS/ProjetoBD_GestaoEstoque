@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciar Produtos</title>
-    <link rel="stylesheet" href="../css/produtos.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/produtos.css') }}">
 </head>
 <body>
     <h1>Lista de Produtos</h1>
@@ -26,6 +26,6 @@
         </tr>
         {% endfor %}
     </table>
-    <script src="produtos.js"></script>
+    <script src="{{ url_for('static', filename='js/produtos.js') }}"></script>
 </body>
 </html>

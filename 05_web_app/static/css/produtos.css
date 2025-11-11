@@ -104,6 +104,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
     font-size: 12px;
     font-weight: 600;
 }
+
 .badge.success { background: #efe; color: #3c3; }
 .badge.warning { background: #ffe; color: #cc8; }
 .badge.danger { background: #fee; color: #c33; }
