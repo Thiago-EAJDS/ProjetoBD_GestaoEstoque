@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>{{ categoria.nome_categoria }}</title>
-    <link rel="stylesheet" href="produtos_cliente.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/produtos_cliente.css') }}">
 </head>
 <body>
     <div class="navbar">
@@ -24,6 +24,6 @@
             {% endfor %}
         </div>
     </div>
-    <script src="produtos_clientes.js"></script>
+    <script src="{{ url_for('static', filename='js/produtos_cliente.js') }}"></script>
 </body>
 </html>
