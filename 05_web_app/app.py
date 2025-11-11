@@ -537,6 +537,7 @@ if __name__ == '__main__':
     print(f"📂 Banco de dados: {os.path.abspath(DB_PATH)}")
     print(f"🌐 Acesse: http://localhost:5000")
     print(f"👨‍💼 Gerentes: {', '.join(GERENTES)}")
+    print("❗ Deus não ajuda quem cedo madruga :(")
     print("=" * 60)
     
     app.run(debug=True, host='0.0.0.0', port=5000)
