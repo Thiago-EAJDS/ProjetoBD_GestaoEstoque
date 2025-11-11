@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Vendas</title>
-    <link rel="stylesheet" href="vendas.css"
-</head>
-<body>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendas.css') }}"
+  </head>
+  <body>
     <div class="navbar">
-        <h1>💰 Histórico de Vendas</h1>
-        <a href="/gerente" class="btn-back">← Voltar</a>
+      <h1>💰 Histórico de Vendas</h1>
+      <a href="/gerente" class="btn-back">← Voltar</a>
     </div>
     <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Data/Hora</th>
-                    <th>Funcionário</th>
-                    <th>Valor Total</th>
-                    <th>Forma de Pagamento</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for venda in vendas %}
-                <tr>
-                    <td>#{{ venda.id_venda }}</td>
-                    <td>{{ venda.data_hora }}</td>
-                    <td>{{ venda.nome }}</td>
-                    <td>R$ {{ "%.2f"|format(venda.valor_total) }}</td>
-                    <td>{{ venda.forma_pagamento }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Data/Hora</th>
+            <th>Funcionário</th>
+            <th>Valor Total</th>
+            <th>Forma de Pagamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for venda in vendas %}
+          <tr>
+            <td>#{{ venda.id_venda }}</td>
+            <td>{{ venda.data_hora }}</td>
+            <td>{{ venda.nome }}</td>
+            <td>R$ {{ "%.2f"|format(venda.valor_total) }}</td>
+            <td>{{ venda.forma_pagamento }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-</body>
+  </body>
 </html>

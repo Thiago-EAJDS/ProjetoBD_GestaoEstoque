@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja Online - Cliente</title>
-    <link rel="stylesheet" href="cliente.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cliente.css') }}">
 </head>
 <body>
     <nav class="navbar">
@@ -87,6 +87,6 @@
             </div>
         </div>
     </div>
-    <script src="cliente.js"></script>
+    <script src="{{ url_for('static', filename='js/cliente.js') }}"></script>
 </body>
 </html>
