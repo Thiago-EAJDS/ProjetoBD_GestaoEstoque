@@ -18,8 +18,7 @@ app = Flask(__name__)
 app.secret_key = 'chave-super-secreta-gestao-estoque-2024'
 
 # Configurações
-DB_PATH = os.path.join(os.path.dirname(__file__),
-                       '../database/gestao_estoque.db')
+DB_PATH = os.path.join(os.path.dirname(__file__), '../database/gestao_estoque.db')
 
 # Lista de emails de gerentes
 GERENTES = [
@@ -32,7 +31,6 @@ GERENTES = [
 # FUNÇÕES AUXILIARES
 # =====================================================
 
-
 def conectar_bd():
     """Conecta ao banco de dados"""
     try:
@@ -43,7 +41,6 @@ def conectar_bd():
         print(f"Erro ao conectar ao banco: {e}")
         return None
 
-
 def login_required(f):
     """Decorator para verificar se usuário está logado"""
     @wraps(f)
@@ -52,7 +49,6 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-
 
 def gerente_required(f):
     """Decorator para verificar se é gerente"""
@@ -68,7 +64,6 @@ def gerente_required(f):
 # ROTAS DE AUTENTICAÇÃO
 # =====================================================
 
-
 @app.route('/')
 def index():
     """Redireciona para login ou dashboard apropriado"""
@@ -79,16 +74,15 @@ def index():
             return redirect(url_for('dashboard_cliente'))
     return redirect(url_for('login'))
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Tela de login"""
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
-
+        
         if not email:
             return render_template('login.html', erro='Por favor, digite um email válido')
-
+        
         # Verificar se é gerente ou cliente
         if email in GERENTES:
             session['email'] = email
@@ -101,9 +95,8 @@ def login():
             if 'carrinho' not in session:
                 session['carrinho'] = []
             return redirect(url_for('dashboard_cliente'))
-
+    
     return render_template('login.html')
-
 
 @app.route('/logout')
 def logout():
@@ -115,7 +108,6 @@ def logout():
 # DASHBOARD DO GERENTE
 # =====================================================
 
-
 @app.route('/gerente')
 @gerente_required
 def dashboard_gerente():
@@ -123,7 +115,7 @@ def dashboard_gerente():
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-
+    
     try:
         # Estatísticas gerais
         stats = {
@@ -132,7 +124,7 @@ def dashboard_gerente():
             'total_funcionarios': conn.execute('SELECT COUNT(*) FROM FUNCIONARIO').fetchone()[0],
             'valor_total_vendas': conn.execute('SELECT COALESCE(SUM(valor_total), 0) FROM VENDA').fetchone()[0]
         }
-
+        
         # Produtos com estoque baixo
         produtos_criticos = conn.execute('''
             SELECT p.nome_produto, c.nome_categoria, 
@@ -143,7 +135,7 @@ def dashboard_gerente():
             ORDER BY p.quantidade_estoque ASC
             LIMIT 5
         ''').fetchall()
-
+        
         # Produtos mais vendidos
         top_produtos = conn.execute('''
             SELECT p.nome_produto, SUM(iv.quantidade) as total_vendido
@@ -153,14 +145,13 @@ def dashboard_gerente():
             ORDER BY total_vendido DESC
             LIMIT 5
         ''').fetchall()
-
-        return render_template('gerente.html',
-                               stats=stats,
-                               produtos_criticos=produtos_criticos,
-                               top_produtos=top_produtos)
+        
+        return render_template('gerente.html', 
+                             stats=stats, 
+                             produtos_criticos=produtos_criticos,
+                             top_produtos=top_produtos)
     finally:
         conn.close()
-
 
 @app.route('/gerente/produtos')
 @gerente_required
@@ -169,7 +160,7 @@ def listar_produtos():
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-
+    
     try:
         produtos = conn.execute('''
             SELECT p.*, c.nome_categoria
@@ -177,37 +168,12 @@ def listar_produtos():
             JOIN CATEGORIA c ON p.id_categoria = c.id_categoria
             ORDER BY p.nome_produto
         ''').fetchall()
-
-        categorias = conn.execute(
-            'SELECT * FROM CATEGORIA ORDER BY nome_categoria').fetchall()
-
+        
+        categorias = conn.execute('SELECT * FROM CATEGORIA ORDER BY nome_categoria').fetchall()
+        
         return render_template('produtos.html', produtos=produtos, categorias=categorias)
     finally:
         conn.close()
-
-
-@app.route('/api/produto/reestocar/<int:id>', methods=['POST'])
-@gerente_required
-def reestocar_produto(id):
-    """Aumenta o estoque de um produto"""
-    try:
-        quantidade = int(request.form.get('quantidade', 0))
-        if quantidade <= 0:
-            return jsonify({'success': False, 'message': 'Quantidade inválida!'}), 400
-
-        conn = conectar_bd()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
-
-        conn.execute(
-            'UPDATE PRODUTO SET quantidade_estoque = quantidade_estoque + ? WHERE id_produto = ?', (quantidade, id))
-        conn.commit()
-        conn.close()
-
-        return jsonify({'success': True, 'message': f'Estoque de +{quantidade} adicionado com sucesso!'})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 400
-
 
 @app.route('/gerente/categorias')
 @gerente_required
@@ -216,7 +182,7 @@ def listar_categorias():
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-
+    
     try:
         categorias = conn.execute('''
             SELECT c.*, COUNT(p.id_produto) as total_produtos
@@ -225,11 +191,10 @@ def listar_categorias():
             GROUP BY c.id_categoria
             ORDER BY c.nome_categoria
         ''').fetchall()
-
+        
         return render_template('categorias.html', categorias=categorias)
     finally:
         conn.close()
-
 
 @app.route('/gerente/vendas')
 @gerente_required
@@ -238,7 +203,7 @@ def listar_vendas():
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-
+    
     try:
         vendas = conn.execute('''
             SELECT v.*, f.nome
@@ -247,7 +212,7 @@ def listar_vendas():
             ORDER BY v.data_hora DESC
             LIMIT 50
         ''').fetchall()
-
+        
         return render_template('vendas.html', vendas=vendas)
     finally:
         conn.close()
@@ -255,7 +220,6 @@ def listar_vendas():
 # =====================================================
 # API - CRUD DE PRODUTOS
 # =====================================================
-
 
 @app.route('/api/produto/adicionar', methods=['POST'])
 @gerente_required
@@ -266,7 +230,7 @@ def adicionar_produto():
         conn = conectar_bd()
         if not conn:
             return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
-
+        
         conn.execute('''
             INSERT INTO PRODUTO 
             (nome_produto, descricao, preco_custo, preco_venda, 
@@ -281,14 +245,13 @@ def adicionar_produto():
             int(dados['estoque_minimo']),
             int(dados['id_categoria'])
         ))
-
+        
         conn.commit()
         conn.close()
-
+        
         return jsonify({'success': True, 'message': 'Produto adicionado com sucesso!'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 400
-
 
 @app.route('/api/produto/editar/<int:id>', methods=['POST'])
 @gerente_required
@@ -299,7 +262,7 @@ def editar_produto(id):
         conn = conectar_bd()
         if not conn:
             return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
-
+        
         conn.execute('''
             UPDATE PRODUTO 
             SET nome_produto = ?, descricao = ?, preco_custo = ?, 
@@ -316,14 +279,13 @@ def editar_produto(id):
             int(dados['id_categoria']),
             id
         ))
-
+        
         conn.commit()
         conn.close()
-
+        
         return jsonify({'success': True, 'message': 'Produto atualizado com sucesso!'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 400
-
 
 @app.route('/api/produto/deletar/<int:id>', methods=['POST'])
 @gerente_required
@@ -333,11 +295,11 @@ def deletar_produto(id):
         conn = conectar_bd()
         if not conn:
             return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
-
+        
         conn.execute('DELETE FROM PRODUTO WHERE id_produto = ?', (id,))
         conn.commit()
         conn.close()
-
+        
         return jsonify({'success': True, 'message': 'Produto deletado com sucesso!'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 400
@@ -346,7 +308,6 @@ def deletar_produto(id):
 # DASHBOARD DO CLIENTE
 # =====================================================
 
-
 @app.route('/cliente')
 @login_required
 def dashboard_cliente():
@@ -354,7 +315,7 @@ def dashboard_cliente():
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-
+    
     try:
         # Produtos disponíveis por categoria
         categorias = conn.execute('''
@@ -365,7 +326,7 @@ def dashboard_cliente():
             GROUP BY c.id_categoria, c.nome_categoria
             ORDER BY c.nome_categoria
         ''').fetchall()
-
+        
         # Produtos em destaque (mais vendidos ou maior estoque)
         produtos_destaque = conn.execute('''
             SELECT p.*, c.nome_categoria
@@ -375,17 +336,16 @@ def dashboard_cliente():
             ORDER BY p.quantidade_estoque DESC
             LIMIT 8
         ''').fetchall()
-
+        
         # Contador do carrinho
         total_itens = len(session.get('carrinho', []))
-
-        return render_template('cliente.html',
-                               categorias=categorias,
-                               produtos=produtos_destaque,
-                               total_itens=total_itens)
+        
+        return render_template('cliente.html', 
+                             categorias=categorias,
+                             produtos=produtos_destaque,
+                             total_itens=total_itens)
     finally:
         conn.close()
-
 
 @app.route('/cliente/categoria/<int:id>')
 @login_required
@@ -394,102 +354,65 @@ def produtos_categoria(id):
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-
+    
     try:
         categoria = conn.execute(
             'SELECT * FROM CATEGORIA WHERE id_categoria = ?', (id,)
         ).fetchone()
-
+        
         if not categoria:
             return "Categoria não encontrada", 404
-
+        
         produtos = conn.execute('''
             SELECT * FROM PRODUTO 
             WHERE id_categoria = ? AND quantidade_estoque > 0
             ORDER BY nome_produto
         ''', (id,)).fetchall()
-
+        
         total_itens = len(session.get('carrinho', []))
-
-        return render_template('produtos_cliente.html',
-                               categoria=categoria,
-                               produtos=produtos,
-                               total_itens=total_itens)
+        
+        return render_template('produtos_cliente.html', 
+                             categoria=categoria,
+                             produtos=produtos,
+                             total_itens=total_itens)
     finally:
         conn.close()
 
 # =====================================================
-# ROTAS DO CARRINHO
+# ROTAS DO CARRINHO 
 # =====================================================
-
 
 @app.route('/api/carrinho/adicionar', methods=['POST'])
 @login_required
 def adicionar_carrinho():
-    """Adiciona produto ao carrinho, respeitando o limite de estoque"""
+    """Adiciona produto ao carrinho"""
     try:
         dados = request.json
-
-        conn = conectar_bd()
-        if not conn:
-            return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
-
-        # Consulta o estoque atual do produto
-        produto_db = conn.execute('''
-            SELECT nome_produto, quantidade_estoque
-            FROM PRODUTO
-            WHERE id_produto = ?
-        ''', (dados['id'],)).fetchone()
-
-        if not produto_db:
-            conn.close()
-            return jsonify({'success': False, 'message': 'Produto não encontrado!'}), 404
-
-        estoque_disponivel = produto_db['quantidade_estoque']
-        conn.close()
-
-        # Quantidade que o cliente quer adicionar
-        quantidade_pedida = int(dados['quantidade'])
-
-        # Recupera o carrinho da sessão
+        
         if 'carrinho' not in session:
             session['carrinho'] = []
-
+        
         carrinho = session['carrinho']
-
-        # Verifica se o produto já está no carrinho
+        
+        produto_existente = False
         for item in carrinho:
             if item['id'] == dados['id']:
-                nova_quantidade = item['quantidade'] + quantidade_pedida
-                if nova_quantidade > estoque_disponivel:
-                    return jsonify({
-                        'success': False,
-                        'message': f'⚠️ Estoque insuficiente! Apenas {estoque_disponivel} unidades disponíveis.'
-                    }), 400
-                item['quantidade'] = nova_quantidade
-                session['carrinho'] = carrinho
-                session.modified = True
-                return jsonify({'success': True, 'total_itens': len(carrinho)})
-
-        # Produto novo no carrinho
-        if quantidade_pedida > estoque_disponivel:
-            return jsonify({
-                'success': False,
-                'message': f'⚠️ Estoque insuficiente! Apenas {estoque_disponivel} unidades disponíveis.'
-            }), 400
-
-        carrinho.append({
-            'id': dados['id'],
-            'nome': dados['nome'],
-            'preco': float(dados['preco']),
-            'quantidade': quantidade_pedida
-        })
-
+                item['quantidade'] += int(dados['quantidade'])
+                produto_existente = True
+                break
+        
+        if not produto_existente:
+            carrinho.append({
+                'id': dados['id'],
+                'nome': dados['nome'],
+                'preco': float(dados['preco']),
+                'quantidade': int(dados['quantidade'])
+            })
+        
         session['carrinho'] = carrinho
         session.modified = True
-
+        
         return jsonify({'success': True, 'total_itens': len(carrinho)})
-
     except Exception as e:
         print(f"Erro adicionar carrinho: {e}")
         return jsonify({'success': False, 'message': str(e)}), 400
@@ -511,16 +434,16 @@ def remover_carrinho(id):
     """Remove item do carrinho"""
     try:
         print(f"DEBUG: Removendo produto ID {id}")
-
+        
         carrinho = session.get('carrinho', [])
         print(f"DEBUG: Carrinho antes: {carrinho}")
-
+        
         carrinho_novo = [item for item in carrinho if item['id'] != id]
         print(f"DEBUG: Carrinho depois: {carrinho_novo}")
-
+        
         session['carrinho'] = carrinho_novo
         session.modified = True
-
+        
         return jsonify({'success': True, 'total_itens': len(carrinho_novo)})
     except Exception as e:
         print(f"ERRO remover: {e}")
@@ -546,55 +469,55 @@ def finalizar_compra():
     """Finaliza compra"""
     try:
         carrinho = session.get('carrinho', [])
-
+        
         if not carrinho:
             return jsonify({'success': False, 'message': 'Carrinho vazio'}), 400
-
+        
         conn = conectar_bd()
         if not conn:
             return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
-
+        
         total = sum(item['preco'] * item['quantidade'] for item in carrinho)
-
+        
         funcionario = conn.execute('''
             SELECT id_funcionario FROM FUNCIONARIO 
             WHERE id_setor = (SELECT id_setor FROM SETOR WHERE nome_setor = 'Caixa' LIMIT 1)
             LIMIT 1
         ''').fetchone()
-
+        
         if not funcionario:
             conn.close()
             return jsonify({'success': False, 'message': 'Nenhum funcionário disponível'}), 400
-
+        
         cursor = conn.cursor()
         cursor.execute('''
             INSERT INTO VENDA (data_hora, valor_total, forma_pagamento, id_funcionario)
             VALUES (?, ?, ?, ?)
         ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), total, 'Online', funcionario[0]))
-
+        
         id_venda = cursor.lastrowid
-
+        
         for item in carrinho:
             subtotal = item['preco'] * item['quantidade']
             cursor.execute('''
                 INSERT INTO ITEM_VENDA (id_venda, id_produto, quantidade, preco_unitario, subtotal)
                 VALUES (?, ?, ?, ?, ?)
             ''', (id_venda, item['id'], item['quantidade'], item['preco'], subtotal))
-
+            
             cursor.execute('''
                 UPDATE PRODUTO 
                 SET quantidade_estoque = quantidade_estoque - ?
                 WHERE id_produto = ?
             ''', (item['quantidade'], item['id']))
-
+        
         conn.commit()
         conn.close()
-
+        
         session['carrinho'] = []
         session.modified = True
-
+        
         return jsonify({
-            'success': True,
+            'success': True, 
             'message': f'Compra #{id_venda} realizada com sucesso!',
             'redirect': url_for('dashboard_cliente')
         })
@@ -606,7 +529,6 @@ def finalizar_compra():
 # INICIALIZAÇÃO
 # =====================================================
 
-
 if __name__ == '__main__':
     print("=" * 60)
     print("🏪 SISTEMA DE GESTÃO DE ESTOQUE - WEB")
@@ -617,5 +539,5 @@ if __name__ == '__main__':
     print(f"👨‍💼 Gerentes: {', '.join(GERENTES)}")
     print("❗ Deus não ajuda quem cedo madruga :(")
     print("=" * 60)
-
+    
     app.run(debug=True, host='0.0.0.0', port=5000)

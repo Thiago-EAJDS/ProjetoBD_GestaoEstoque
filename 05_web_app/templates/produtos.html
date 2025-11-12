@@ -96,6 +96,46 @@
         </div>
     </div>
 
+    <!-- Modal para Editar -->
+<div id="modalEditar" class="modal">
+    <div class="modal-content">
+        <h2>Editar Produto</h2>
+        <form onsubmit="salvarEdicao(event)">
+            <input type="hidden" id="edit_id" name="id">
+
+            <label>Nome:</label>
+            <input type="text" id="edit_nome" name="nome" required>
+
+            <label>Descrição:</label>
+            <input type="text" id="edit_descricao" name="descricao">
+
+            <label>Preço de Custo:</label>
+            <input type="number" step="0.01" id="edit_preco_custo" name="preco_custo" required>
+
+            <label>Preço de Venda:</label>
+            <input type="number" step="0.01" id="edit_preco_venda" name="preco_venda" required>
+
+            <label>Quantidade em Estoque:</label>
+            <input type="number" id="edit_quantidade" name="quantidade" required>
+
+            <label>Estoque Mínimo:</label>
+            <input type="number" id="edit_estoque_minimo" name="estoque_minimo" required>
+
+            <label>Categoria:</label>
+            <select id="edit_categoria" name="id_categoria" required>
+                {% for c in categorias %}
+                    <option value="{{ c.id_categoria }}">{{ c.nome_categoria }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-confirm">Salvar Alterações</button>
+                <button type="button" class="btn-cancel" onclick="fecharModal('modalEditar')">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
     <script src="{{ url_for('static', filename='js/produtos.js') }}"></script>
 </body>
 </html>
