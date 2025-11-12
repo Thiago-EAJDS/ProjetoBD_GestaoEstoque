@@ -50,7 +50,8 @@ async function remover(id, nome) {
     }
 
     async function finalizar() {
-        if (!confirm('Confirmar a compra de R$ {{ "%.2f"|format(total) }}?')) return;
+     
+      if (!confirm(`Confirmar a compra de R$ ${TOTAL_COMPRA.toFixed(2)}?`))return;
         
         try {
             const res = await fetch('/api/carrinho/finalizar', {

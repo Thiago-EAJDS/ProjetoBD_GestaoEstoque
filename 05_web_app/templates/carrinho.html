@@ -1,50 +1,73 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Carrinho de Compras</title>  
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/carrinho.css') }}"> 
-</head>
-<body>
+  <head>
+    <title>Carrinho de Compras</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/carrinho.css') }}"
+    />
+  </head>
+  <body>
     <div class="navbar">
-        <h1>🛒 Meu Carrinho</h1>
+      <h1>🛒 Meu Carrinho</h1>
     </div>
     <div class="container">
-        {% if carrinho %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Preço</th>
-                    <th>Quantidade</th>
-                    <th>Subtotal</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in carrinho %}
-<tr id="item-{{ item.id }}">
-    <td>{{ item.nome }}</td>
-    <td>R$ {{ "%.2f"|format(item.preco) }}</td>
-    <td>{{ item.quantidade }}</td>
-    <td>R$ {{ "%.2f"|format(item.preco * item.quantidade) }}</td>
-    <td><button class="btn-remover" onclick="remover('{{ item.id }}', '{{ item.nome }}')">Remover</button></td>
-</tr>
-{% endfor %}
-            </tbody>
-        </table>
-        <div class="total">Total: R$ {{ "%.2f"|format(total) }}</div>
-        <div style="text-align: center;">
-            <button class="btn btn-finalizar" onclick="finalizar()">✅ Finalizar Compra</button>
-            <button class="btn btn-limpar" onclick="limpar()">🗑️ Limpar Carrinho</button>
-            <a href="/cliente"><button class="btn btn-continuar">🛍️ Continuar Comprando</button></a>
-        </div>
-        {% else %}
-        <p style="text-align: center; padding: 40px; color: #666;">Seu carrinho está vazio</p>
-        <div style="text-align: center;">
-            <a href="/cliente"><button class="btn btn-continuar">🛍️ Ir às Compras</button></a>
-        </div>
-        {% endif %}
+      {% if carrinho %}
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Quantidade</th>
+            <th>Subtotal</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in carrinho %}
+          <tr id="item-{{ item.id }}">
+            <td>{{ item.nome }}</td>
+            <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>R$ {{ "%.2f"|format(item.preco * item.quantidade) }}</td>
+            <td>
+              <button
+                class="btn-remover"
+                onclick="remover('{{ item.id }}', '{{ item.nome }}')"
+              >
+                Remover
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="total">Total: R$ {{ "%.2f"|format(total) }}</div>
+      <div style="text-align: center">
+        <button class="btn btn-finalizar" onclick="finalizar()">
+          ✅ Finalizar Compra
+        </button>
+        <button class="btn btn-limpar" onclick="limpar()">
+          🗑️ Limpar Carrinho
+        </button>
+        <a href="/cliente"
+          ><button class="btn btn-continuar">🛍️ Continuar Comprando</button></a
+        >
+      </div>
+      {% else %}
+      <p style="text-align: center; padding: 40px; color: #666">
+        Seu carrinho está vazio
+      </p>
+      <div style="text-align: center">
+        <a href="/cliente"
+          ><button class="btn btn-continuar">🛍️ Ir às Compras</button></a
+        >
+      </div>
+      {% endif %}
     </div>
+    <script>
+      const TOTAL_COMPRA = {{ total|tojson }};
+    </script>
     <script src="{{ url_for('static', filename='js/carrinho.js') }}"></script>
-</body>
+  </body>
 </html>

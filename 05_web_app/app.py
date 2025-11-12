@@ -426,34 +426,70 @@ def produtos_categoria(id):
 @app.route('/api/carrinho/adicionar', methods=['POST'])
 @login_required
 def adicionar_carrinho():
-    """Adiciona produto ao carrinho"""
+    """Adiciona produto ao carrinho, respeitando o limite de estoque"""
     try:
         dados = request.json
 
+        conn = conectar_bd()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
+
+        # Consulta o estoque atual do produto
+        produto_db = conn.execute('''
+            SELECT nome_produto, quantidade_estoque
+            FROM PRODUTO
+            WHERE id_produto = ?
+        ''', (dados['id'],)).fetchone()
+
+        if not produto_db:
+            conn.close()
+            return jsonify({'success': False, 'message': 'Produto não encontrado!'}), 404
+
+        estoque_disponivel = produto_db['quantidade_estoque']
+        conn.close()
+
+        # Quantidade que o cliente quer adicionar
+        quantidade_pedida = int(dados['quantidade'])
+
+        # Recupera o carrinho da sessão
         if 'carrinho' not in session:
             session['carrinho'] = []
 
         carrinho = session['carrinho']
 
-        produto_existente = False
+        # Verifica se o produto já está no carrinho
         for item in carrinho:
             if item['id'] == dados['id']:
-                item['quantidade'] += int(dados['quantidade'])
-                produto_existente = True
-                break
+                nova_quantidade = item['quantidade'] + quantidade_pedida
+                if nova_quantidade > estoque_disponivel:
+                    return jsonify({
+                        'success': False,
+                        'message': f'⚠️ Estoque insuficiente! Apenas {estoque_disponivel} unidades disponíveis.'
+                    }), 400
+                item['quantidade'] = nova_quantidade
+                session['carrinho'] = carrinho
+                session.modified = True
+                return jsonify({'success': True, 'total_itens': len(carrinho)})
 
-        if not produto_existente:
-            carrinho.append({
-                'id': dados['id'],
-                'nome': dados['nome'],
-                'preco': float(dados['preco']),
-                'quantidade': int(dados['quantidade'])
-            })
+        # Produto novo no carrinho
+        if quantidade_pedida > estoque_disponivel:
+            return jsonify({
+                'success': False,
+                'message': f'⚠️ Estoque insuficiente! Apenas {estoque_disponivel} unidades disponíveis.'
+            }), 400
+
+        carrinho.append({
+            'id': dados['id'],
+            'nome': dados['nome'],
+            'preco': float(dados['preco']),
+            'quantidade': quantidade_pedida
+        })
 
         session['carrinho'] = carrinho
         session.modified = True
 
         return jsonify({'success': True, 'total_itens': len(carrinho)})
+
     except Exception as e:
         print(f"Erro adicionar carrinho: {e}")
         return jsonify({'success': False, 'message': str(e)}), 400
