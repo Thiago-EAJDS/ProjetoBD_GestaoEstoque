@@ -218,6 +218,52 @@ def listar_vendas():
         conn.close()
 
 # =====================================================
+# API - CRUD DE CATEGORIAS
+# =====================================================
+
+@app.route('/api/categoria/adicionar', methods=['POST'])
+@gerente_required
+def adicionar_categoria():
+    """Adiciona nova categoria"""
+    try:
+        conn = conectar_bd()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
+        
+        conn.execute('''
+            INSERT INTO CATEGORIA (nome_categoria, descricao)
+            VALUES (?, ?)
+        ''', (request.form['nome'], request.form.get('descricao', '')))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': 'Categoria adicionada com sucesso!'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 400
+
+@app.route('/api/categoria/deletar/<int:id>', methods=['POST'])
+@gerente_required
+def deletar_categoria(id):
+    """Deleta categoria e todos seus produtos"""
+    try:
+        conn = conectar_bd()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
+        
+        # Deleta produtos da categoria
+        conn.execute('DELETE FROM PRODUTO WHERE id_categoria = ?', (id,))
+        # Deleta a categoria
+        conn.execute('DELETE FROM CATEGORIA WHERE id_categoria = ?', (id,))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': 'Categoria e produtos deletados com sucesso!'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 400
+
+# =====================================================
 # API - CRUD DE PRODUTOS
 # =====================================================
 
@@ -301,6 +347,29 @@ def deletar_produto(id):
         conn.close()
         
         return jsonify({'success': True, 'message': 'Produto deletado com sucesso!'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 400
+    
+@app.route('/api/produto/reestocar/<int:id>', methods=['POST'])
+@gerente_required
+def reestocar_produto(id):
+    """Adiciona quantidade ao estoque"""
+    try:
+        quantidade = int(request.form['quantidade'])
+        conn = conectar_bd()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Erro ao conectar ao banco'}), 500
+        
+        conn.execute('''
+            UPDATE PRODUTO 
+            SET quantidade_estoque = quantidade_estoque + ?
+            WHERE id_produto = ?
+        ''', (quantidade, id))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': f'{quantidade} unidades adicionadas ao estoque!'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 400
 

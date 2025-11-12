@@ -1,35 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Categorias</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/categorias.css') }}">
+<title>Categorias</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/categorias.css') }}">
 </head>
 <body>
-    <div class="navbar">
-        <h1>🗂️ Categorias</h1>
-        <a href="/gerente" class="btn-back">← Voltar</a>
-    </div>
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Descrição</th>
-                    <th>Total de Produtos</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cat in categorias %}
-                <tr>
-                    <td>{{ cat.id_categoria }}</td>
-                    <td>{{ cat.nome_categoria }}</td>
-                    <td>{{ cat.descricao or '-' }}</td>
-                    <td>{{ cat.total_produtos }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="navbar">
+<h1>🗂️ Categorias</h1>
+<div class="nav-actions">
+<button class="btn-add" onclick="abrirModalAdicionar()">➕ Adicionar Categoria</button>
+<a href="/gerente" class="btn-back">← Voltar</a>
+</div>
+</div>
+
+<div class="container">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nome</th>
+<th>Descrição</th>
+<th>Total de Produtos</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody>
+{% for cat in categorias %}
+<tr>
+<td>{{ cat.id_categoria }}</td>
+<td>{{ cat.nome_categoria }}</td>
+<td>{{ cat.descricao or '-' }}</td>
+<td>{{ cat.total_produtos }}</td>
+<td>
+<button class="btn-delete" onclick="deletarCategoria({{ cat.id_categoria }}, '{{ cat.nome_categoria }}', {{ cat.total_produtos }})">🗑️ Excluir</button>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<!-- Modal Adicionar -->
+<div id="modalAdicionar" class="modal">
+<div class="modal-content">
+<h2>Nova Categoria</h2>
+<form onsubmit="adicionarCategoria(event)">
+<label>Nome:</label>
+<input type="text" name="nome" required>
+<label>Descrição:</label>
+<textarea name="descricao" rows="3"></textarea>
+<div class="modal-buttons">
+<button type="submit" class="btn-confirm">Salvar</button>
+<button type="button" class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+</div>
+</form>
+</div>
+</div>
+
+<script src="{{ url_for('static', filename='js/categorias.js') }}"></script>
 </body>
 </html>
