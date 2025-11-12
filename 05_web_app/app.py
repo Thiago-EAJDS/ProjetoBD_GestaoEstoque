@@ -229,16 +229,22 @@ def listar_vendas():
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-    
+
     try:
         vendas = conn.execute('''
-            SELECT v.*, f.nome
+            SELECT v.id_venda,
+                   v.data_hora,
+                   f.nome AS nome_funcionario,
+                   c.nome_cliente AS nome_cliente,
+                   v.valor_total,
+                   v.forma_pagamento
             FROM VENDA v
             JOIN FUNCIONARIO f ON v.id_funcionario = f.id_funcionario
+            LEFT JOIN CLIENTE c ON v.id_cliente = c.id_cliente
             ORDER BY v.data_hora DESC
             LIMIT 50
         ''').fetchall()
-        
+
         return render_template('vendas.html', vendas=vendas)
     finally:
         conn.close()
@@ -604,11 +610,6 @@ def finalizar_compra():
             return jsonify({'success': False, 'message': 'Nenhum funcionário disponível'}), 400
         
         cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO VENDA (data_hora, valor_total, forma_pagamento, id_funcionario)
-            VALUES (?, ?, ?, ?)
-        ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), total, 'Online', funcionario[0]))
-        
         cursor.execute('''
         INSERT INTO VENDA (data_hora, valor_total, forma_pagamento, id_funcionario, id_cliente)
         VALUES (?, ?, ?, ?, ?)

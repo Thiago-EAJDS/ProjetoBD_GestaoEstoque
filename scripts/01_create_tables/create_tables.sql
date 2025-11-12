@@ -93,8 +93,9 @@ CREATE TABLE VENDA (
     valor_total DECIMAL(10,2) NOT NULL,
     forma_pagamento VARCHAR(20) NOT NULL,
     id_funcionario INTEGER NOT NULL,
-    FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario)
-    ALTER TABLE VENDA ADD COLUMN id_cliente INTEGER REFERENCES CLIENTE(id_cliente);
+    id_cliente INTEGER,
+    FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario),
+    FOREIGN KEY (id_cliente) REFERENCES CLIENTE(id_cliente)
 );
 
 -- =====================================================
