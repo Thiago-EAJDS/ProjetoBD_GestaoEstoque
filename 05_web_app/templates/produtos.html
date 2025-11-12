@@ -9,7 +9,10 @@
 <body>
     <nav class="navbar">
         <h1>🏪 Lista de Produtos</h1>
-        <a href="/gerente" class="btn-back">Voltar</a>
+        <div class="nav-actions">
+            <button class="btn-add" onclick="abrirModalAdicionar()">➕ Adicionar Produto</button>
+            <a href="/gerente" class="btn-back">Voltar</a>
+        </div>
     </nav>
 
     <div class="container">
@@ -29,9 +32,67 @@
                         <span class="info-label">Estoque:</span>
                         <span class="info-value">{{ produto.quantidade_estoque }}</span>
                     </div>
+                    <div class="info-row">
+                        <span class="info-label">Vendidos:</span>
+                        <span class="info-value">{{ produto.vendidos or 0 }}</span>
+                    </div>
+                </div>
+                <div class="produto-actions">
+                    <button class="btn-edit" onclick="editarProduto(
+                        '{{ produto.id_produto }}',
+                        '{{ produto.nome_produto }}',
+                        '{{ produto.descricao }}',
+                        '{{ produto.preco_custo }}',
+                        '{{ produto.preco_venda }}',
+                        '{{ produto.quantidade_estoque }}',
+                        '{{ produto.estoque_minimo }}',
+                        '{{ produto.id_categoria }}'
+                    )">✏️ Editar</button>
+
+                    <button class="btn-stock" onclick="reestocarProduto('{{ produto.id_produto }}', '{{ produto.nome_produto }}')">📦 Reestocar</button>
+
+                    <button class="btn-delete" onclick="deletarProduto('{{ produto.id_produto }}', '{{ produto.nome_produto }}')">🗑️ Excluir</button>
                 </div>
             </div>
             {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal para Adicionar -->
+    <div id="modalAdicionar" class="modal">
+        <div class="modal-content">
+            <h2>Adicionar Produto</h2>
+            <form onsubmit="adicionarProduto(event)">
+                <label>Nome:</label>
+                <input type="text" name="nome" required>
+
+                <label>Descrição:</label>
+                <input type="text" name="descricao">
+
+                <label>Preço de Custo:</label>
+                <input type="number" step="0.01" name="preco_custo" required>
+
+                <label>Preço de Venda:</label>
+                <input type="number" step="0.01" name="preco_venda" required>
+
+                <label>Quantidade:</label>
+                <input type="number" name="quantidade" required>
+
+                <label>Estoque Mínimo:</label>
+                <input type="number" name="estoque_minimo" required>
+
+                <label>Categoria:</label>
+                <select name="id_categoria" required>
+                    {% for c in categorias %}
+                        <option value="{{ c.id_categoria }}">{{ c.nome_categoria }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-confirm">Salvar</button>
+                    <button type="button" class="btn-cancel" onclick="fecharModal('modalAdicionar')">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
 
