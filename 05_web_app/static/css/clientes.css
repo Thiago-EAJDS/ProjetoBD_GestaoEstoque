@@ -1,0 +1,132 @@
+/* ======= BASE ======= */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6fa;
+    color: #333;
+}
+
+/* ======= NAVBAR ======= */
+.navbar {
+    background-color: #5a6dfc;
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar h1 {
+    font-size: 22px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* user-info dentro da navbar */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* email do usuário */
+.user-email {
+    color: #ffffffdd;
+    font-size: 14px;
+}
+
+/* botão voltar */
+.btn-voltar {
+    background-color: white;
+    color: #5a6dfc;
+    border: none;
+    border-radius: 24px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.btn-voltar:hover {
+    background-color: #eef0ff;
+}
+
+/* ======= CONTAINER PRINCIPAL ======= */
+.container {
+    margin: 36px auto;
+    width: 92%;
+    max-width: 1100px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    padding: 20px 24px;
+}
+
+/* ======= BARRA DE PESQUISA ======= */
+.search-box {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#filtroCliente {
+    padding: 10px 14px;
+    border: 1px solid #d6d8e9;
+    border-radius: 8px;
+    width: 320px;
+    font-size: 15px;
+    transition: border-color 0.12s;
+}
+
+#filtroCliente:focus {
+    outline: none;
+    border-color: #5a6dfc;
+    box-shadow: 0 2px 8px rgba(90,109,252,0.08);
+}
+
+/* ======= TABELA ======= */
+#tabelaClientes {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+#tabelaClientes thead {
+    background-color: #5a6dfc;
+    color: white;
+}
+
+#tabelaClientes th,
+#tabelaClientes td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eef0f6;
+}
+
+#tabelaClientes th:first-child,
+#tabelaClientes td:first-child {
+    width: 70px;
+}
+
+#tabelaClientes tbody tr:nth-child(even) {
+    background: #fbfbff;
+}
+
+#tabelaClientes tbody tr:hover {
+    background-color: #f5f7ff;
+    transition: background-color 0.12s;
+}
+
+/* ======= MENSAGEM "SEM DADOS" ======= */
+.no-data {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+    font-style: italic;
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Clientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/clientes.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>👥 Gerenciar Clientes</h1>
+        <div class="user-info">
+            <span class="user-email">{{ session.email }}</span>
+            <a href="/gerente" class="btn-voltar">⬅️ Voltar</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="filtroCliente" placeholder="Pesquisar por nome ou ID..." onkeyup="filtrarClientes()">
+        </div>
+
+        <table id="tabelaClientes">
+            <thead>
+                <tr>
+                    <th>ID Cliente</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Data de Cadastro</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.id_cliente }}</td>
+                    <td>{{ cliente.nome_cliente }}</td>
+                    <td>{{ cliente.email }}</td>
+                    <td>{{ cliente.data_cadastro }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/clientes.js') }}"></script>
+</body>
+</html>

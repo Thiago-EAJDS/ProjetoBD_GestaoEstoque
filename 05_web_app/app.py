@@ -243,6 +243,25 @@ def listar_vendas():
     finally:
         conn.close()
 
+@app.route('/gerente/clientes')
+@gerente_required
+def listar_clientes():
+    """Lista todos os clientes cadastrados"""
+    conn = conectar_bd()
+    if not conn:
+        return "Erro ao conectar ao banco de dados", 500
+
+    try:
+        clientes = conn.execute('''
+            SELECT id_cliente, nome_cliente, email, data_cadastro
+            FROM CLIENTE
+            ORDER BY id_cliente ASC
+        ''').fetchall()
+        
+        return render_template('clientes.html', clientes=clientes)
+    finally:
+        conn.close()
+
 # =====================================================
 # API - CRUD DE CATEGORIAS
 # =====================================================
