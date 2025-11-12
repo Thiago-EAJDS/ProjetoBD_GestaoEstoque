@@ -63,7 +63,9 @@ label {
   font-size: 14px;
 }
 
-input[type="email"] {
+/* ADIÇÃO: aplicar o mesmo estilo do email também ao campo de texto */
+input[type="email"],
+input[type="text"] {
   width: 100%;
   padding: 15px;
   border: 2px solid #e0e0e0;
@@ -72,7 +74,8 @@ input[type="email"] {
   transition: all 0.3s;
 }
 
-input[type="email"]:focus {
+input[type="email"]:focus,
+input[type="text"]:focus {
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);

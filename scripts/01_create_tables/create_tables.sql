@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS FUNCIONARIO;
 DROP TABLE IF EXISTS FORNECEDOR;
 DROP TABLE IF EXISTS SETOR;
 DROP TABLE IF EXISTS CATEGORIA;
+DROP TABLE IF EXISTS CLIENTE;
 
 -- =====================================================
 -- 1. TABELA CATEGORIA
@@ -93,6 +94,7 @@ CREATE TABLE VENDA (
     forma_pagamento VARCHAR(20) NOT NULL,
     id_funcionario INTEGER NOT NULL,
     FOREIGN KEY (id_funcionario) REFERENCES FUNCIONARIO(id_funcionario)
+    ALTER TABLE VENDA ADD COLUMN id_cliente INTEGER REFERENCES CLIENTE(id_cliente);
 );
 
 -- =====================================================
@@ -159,6 +161,16 @@ CREATE TABLE ITEM_COMPRA (
     PRIMARY KEY (id_compra, id_produto),
     FOREIGN KEY (id_compra) REFERENCES COMPRA(id_compra),
     FOREIGN KEY (id_produto) REFERENCES PRODUTO(id_produto)
+);
+
+-- =====================================================
+-- 12. TABELA CLIENTE
+-- =====================================================
+CREATE TABLE CLIENTE (
+    id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome_cliente TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- =====================================================

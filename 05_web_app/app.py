@@ -79,21 +79,47 @@ def login():
     """Tela de login"""
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
+        nome = request.form.get('nome', '').strip()
         
-        if not email:
-            return render_template('login.html', erro='Por favor, digite um email válido')
+        if not email or not nome:
+            return render_template('login.html', erro='Preencha nome e email')
         
-        # Verificar se é gerente ou cliente
+        # Verificar se é gerente
         if email in GERENTES:
             session['email'] = email
+            session['nome'] = nome
             session['tipo'] = 'gerente'
             return redirect(url_for('dashboard_gerente'))
         else:
-            session['email'] = email
+            # É cliente - verificar/criar no banco
+            conn = conectar_bd()
+            if not conn:
+                return render_template('login.html', erro='Erro ao conectar ao banco')
+            
+            cliente = conn.execute(
+                'SELECT * FROM CLIENTE WHERE email = ?', (email,)
+            ).fetchone()
+            
+            if cliente:
+                # Cliente existente
+                session['id_cliente'] = cliente['id_cliente']
+                session['nome'] = cliente['nome_cliente']
+                session['email'] = email
+            else:
+                # Novo cliente
+                cursor = conn.cursor()
+                cursor.execute(
+                    'INSERT INTO CLIENTE (nome_cliente, email) VALUES (?, ?)',
+                    (nome, email)
+                )
+                conn.commit()
+                session['id_cliente'] = cursor.lastrowid
+                session['nome'] = nome
+                session['email'] = email
+            
+            conn.close()
             session['tipo'] = 'cliente'
-            # Inicializar carrinho vazio
-            if 'carrinho' not in session:
-                session['carrinho'] = []
+            session['carrinho'] = []
             return redirect(url_for('dashboard_cliente'))
     
     return render_template('login.html')
@@ -564,6 +590,10 @@ def finalizar_compra():
             VALUES (?, ?, ?, ?)
         ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), total, 'Online', funcionario[0]))
         
+        cursor.execute('''
+        INSERT INTO VENDA (data_hora, valor_total, forma_pagamento, id_funcionario, id_cliente)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), total, 'Online', funcionario[0], session.get('id_cliente')))
         id_venda = cursor.lastrowid
         
         for item in carrinho:
