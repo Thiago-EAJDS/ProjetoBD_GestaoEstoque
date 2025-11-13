@@ -182,21 +182,32 @@ def dashboard_gerente():
 @app.route('/gerente/produtos')
 @gerente_required
 def listar_produtos():
-    """Lista todos os produtos"""
+    """Lista todos os produtos com total vendido"""
     conn = conectar_bd()
     if not conn:
         return "Erro ao conectar ao banco de dados", 500
-    
+
     try:
         produtos = conn.execute('''
-            SELECT p.*, c.nome_categoria
+            SELECT 
+                p.id_produto,
+                p.nome_produto,
+                p.descricao,
+                p.preco_custo,
+                p.preco_venda,
+                p.quantidade_estoque,
+                p.estoque_minimo,
+                c.nome_categoria,
+                IFNULL(SUM(iv.quantidade), 0) AS vendidos
             FROM PRODUTO p
             JOIN CATEGORIA c ON p.id_categoria = c.id_categoria
-            ORDER BY p.nome_produto
+            LEFT JOIN ITEM_VENDA iv ON p.id_produto = iv.id_produto
+            GROUP BY p.id_produto
+            ORDER BY p.nome_produto;
         ''').fetchall()
-        
+
         categorias = conn.execute('SELECT * FROM CATEGORIA ORDER BY nome_categoria').fetchall()
-        
+
         return render_template('produtos.html', produtos=produtos, categorias=categorias)
     finally:
         conn.close()

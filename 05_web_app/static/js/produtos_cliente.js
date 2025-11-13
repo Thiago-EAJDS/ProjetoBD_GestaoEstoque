@@ -8,7 +8,7 @@
         });
         const result = await res.json();
         if (result.success) {
-            alert('✅ Produto adicionado! Total de itens: ' + result.total_itens);
+            alert('✅ Produto adicionado!');
             // Recarregar página para atualizar contador
             location.reload();
         }
