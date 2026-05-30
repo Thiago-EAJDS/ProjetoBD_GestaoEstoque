@@ -1,4 +1,3 @@
-<div align="center">
 
 # 🏪 Sistema de Gestão de Estoque
 
