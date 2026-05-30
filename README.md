@@ -15,55 +15,6 @@ O projeto integra conceitos de banco de dados relacional, desenvolvimento web co
 
 ---
 
-## ✨ Funcionalidades
-
-### 👨‍💼 Área do Gerente
-- Dashboard com estatísticas gerais (produtos, vendas, funcionários, faturamento)
-- Alerta de produtos com estoque crítico
-- Ranking dos produtos mais vendidos
-- CRUD completo de produtos e categorias
-- Reabastecimento de estoque
-- Histórico de vendas
-- Listagem de clientes cadastrados
-
-### 🛒 Área do Cliente
-- Catálogo de produtos por categoria
-- Carrinho de compras interativo
-- Finalização de compra com atualização automática do estoque
-- Cadastro automático no primeiro acesso
-
-### 🐍 Script Python (Terminal)
-- Menu interativo para consultas ao banco via terminal
-- Exibição formatada de relatórios com `tabulate`
-- Estatísticas gerais, estoque crítico, vendas por pagamento, top produtos e mais
-
----
-
-## 🗂️ Estrutura do Projeto
-
-```
-ProjetoBD_GestaoEstoque/
-├── 04_python/
-│   └── conexao_banco.py        # Script de consultas via terminal
-├── 05_web_app/
-│   ├── static/
-│   │   ├── css/                # Estilos da aplicação
-│   │   └── js/                 # Scripts JavaScript
-│   ├── templates/              # Templates HTML (Jinja2)
-│   └── app.py                  # Servidor Flask
-├── database/
-│   └── gestao_estoque.db       # Banco de dados SQLite
-└── scripts/
-    ├── 01_create_tables/
-    │   └── create_tables.sql   # Criação das tabelas
-    ├── 02_insert_data/
-    │   └── insert_data.sql     # Dados iniciais (110+ registros)
-    └── 03_consultas/
-        └── consultas_sql.sql   # 10 consultas SQL avançadas
-```
-
----
-
 ## 🗄️ Banco de Dados
 
 O banco possui **12 tabelas** com relacionamentos completos:
