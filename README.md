@@ -118,10 +118,3 @@ O projeto cobre os principais recursos de SQL, organizados em 10 consultas + 1 b
 - `sqlite3` — conexão nativa com o banco de dados
 
 ---
-
-## 👨‍💻 Autor
-
-**Thiago Emanuel Araújo Jorge de Sá**
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/thiago-araújo-2005ab369/)
-[![Portfólio](https://img.shields.io/badge/Portfólio-7c5cbf?style=flat-square&logo=vercel&logoColor=white)](https://portifolio-thiagoaraujo.vercel.app/)
